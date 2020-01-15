@@ -1,3 +1,8 @@
 Here are my notes for the project. 
 I need to do well
 
+----------------------------------------------------------------------------
+
+I want to create a bot that scrubs website(s) for news on a person
+The news will then try to detect if someone will will/lose a fight
+or a celebrity's popularity rises/drops
