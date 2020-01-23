@@ -69,13 +69,6 @@ num_correct = 0
 num_wrong = 0
 for line in ds:
     a = line.split(" ")
-    if "amazing" in a or "great" in a or "good" in a or "yes" in a:
-        if b[j] == res_pos:
-            num_correct += 1
-        else:
-            num_wrong += 1
-        j += 1
-        continue   
     if "awful" in a or "terrible" in a or "bad" in a or "no" in a:
         if b[j] == res_neg:
             num_correct += 1
@@ -83,8 +76,21 @@ for line in ds:
             num_wrong += 1
         j += 1
         continue
+    if "amazing" in a or "great" in a or "good" in a or "yes" in a:
+        if b[j] == res_pos:
+            num_correct += 1
+        else:
+            num_wrong += 1
+        j += 1
+        continue   
+    
     if len(line) > avg and check:
         if b[j] == res_pos:
+            num_correct += 1
+        else: 
+            num_wrong += 1
+    elif len(line) < avg and not check:
+        if b[j] == res_neg:
             num_correct += 1
         else: 
             num_wrong += 1
