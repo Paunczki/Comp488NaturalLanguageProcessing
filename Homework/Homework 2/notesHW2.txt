@@ -1,9 +1,0 @@
-s = "one two three one two five"
-
-l = s.split()
-
-set(l)
-
-from collections import Counter
-
-Counter(s.split())
