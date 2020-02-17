@@ -1,15 +1,3 @@
-'''
-s = "one two three one two five"
-
-l = s.split()
-
-set(l)
-
-from collections import Counter
-
-Counter(s.split())
-'''
-
 stopwords = []
 def stop_words():
     f = open('Homework/Homework 2/stop_words.txt', 'r')
@@ -44,11 +32,25 @@ posdev, postest = train_test_split(poshold, test_size=0.5)
 negtrain, neghold = train_test_split(negrev, test_size=0.3)
 negdev, negtest = train_test_split(neghold, test_size=0.5)
 
-dev = posdev + negdev
-test = postest + negtest
+# dev = posdev + negdev
+# test = postest + negtest
 
 # Now we can work
+# I do not join training since we want to know the polarity
 
-print(dev)
+
+def naive_bayes_classifier():
+    print('hi')
 
 
+'''
+s = "one two three one two five"
+
+l = s.split()
+
+set(l)
+
+from collections import Counter
+
+Counter(s.split())
+'''
