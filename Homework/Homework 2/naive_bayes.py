@@ -35,13 +35,26 @@ negdev, negtest = train_test_split(neghold, test_size=0.5)
 # dev = posdev + negdev
 # test = postest + negtest
 
-# Now we can work
-# I do not join training since we want to know the polarity
-
+from collections import Counter
 
 def naive_bayes_classifier():
-    print('hi')
+    posbagwords = []
+    negbagwords = []
+    for line in postrain:
+        a = line.split()
+        for i in a:
+            # Here I need conditional to remove stop words and punctuation
+            posbagwords.append(i)
+    for line in negtrain:
+        b = line.split()
+        for j in b:
+            # Here I need conditional to remove stop words and punctuation
+            negbagwords.append(j)
+    poscounter = Counter(posbagwords)
+    negcounter = Counter(negbagwords)
+    
 
+naive_bayes_classifier()
 
 '''
 s = "one two three one two five"
