@@ -5,7 +5,6 @@ def stop_words():
         s = line.split('\n')
         stopwords.append(s[0])
 
-
 posrev = []
 negrev = []
 def store_reviews():
@@ -20,6 +19,7 @@ def store_reviews():
 
 
 stop_words()
+# print(stopwords)
 store_reviews()
 
 # We now have raw data stored and can split
@@ -43,13 +43,13 @@ def naive_bayes_classifier():
     for line in postrain:
         a = line.split()
         for i in a:
-            # Here I need conditional to remove stop words and punctuation
-            posbagwords.append(i)
+            if i not in stopwords:
+                posbagwords.append(i)
     for line in negtrain:
         b = line.split()
         for j in b:
-            # Here I need conditional to remove stop words and punctuation
-            negbagwords.append(j)
+            if j not in stopwords:
+                negbagwords.append(j)
     poscounter = Counter(posbagwords)
     negcounter = Counter(negbagwords)
     
