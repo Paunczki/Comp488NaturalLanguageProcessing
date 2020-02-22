@@ -42,7 +42,7 @@ def prob_word(binaryclass, word, totvocab):
 
 from collections import Counter
 
-def train_naive_bayes(postrain, negtrain):
+def train_naive_bayes(postrain, negtrain, n):
     posbagwords = []
     negbagwords = []
     for line in postrain:
@@ -55,11 +55,22 @@ def train_naive_bayes(postrain, negtrain):
         for j in b:
             if j not in stopwords:
                 negbagwords.append(j)
-    poscounter = Counter(posbagwords)
-    negcounter = Counter(negbagwords)
-    allwords = poscounter + negcounter
-    vocab = len(allwords)
-    # Create probability table for each word given class
+    positive = Counter(posbagwords)
+    negative = Counter(negbagwords)
+    # I will only include words that occur more than n times
+    poscounter = dict()
+    negcounter = dict()
+    vocab = 0
+    for l in positive:
+        if positive[l] >= n:
+            poscounter[l] = positive[l]
+    vocab += len(poscounter)
+    for l in negative:
+        if negative[l] >= n:
+            negcounter[l] = negative[l]
+            # print(negcounter)
+            if l not in poscounter:
+               vocab += 1
     posprob = dict()
     for word in poscounter:
         probword = prob_word(poscounter, word, vocab)
@@ -70,8 +81,10 @@ def train_naive_bayes(postrain, negtrain):
         negprob[word] = probword
     return posprob, negprob
     
-    
-positiveprobabilities, negativeprobabilities = train_naive_bayes(postrainer, negtrainer)
+
+# Create classifier
+# n is the number of words to include in the clasifier
+positiveprobabilities, negativeprobabilities = train_naive_bayes(postrainer, negtrainer, 90)
 
 
 pwords, nwords = [], []
@@ -90,13 +103,18 @@ def probability_sentence(allwords, polarclass, wordlist):
             w = polarclass.get(word)
             if w is not None:
                 percent *= w 
+        else:
+            percent *= (1/8000)
+    if percent == 1:
+        return 0
     return percent
  
 
-# 0 is negative
-# 1 is positive
+# polarity 0 is negative
+# polarity 1 is positive
+# Test the classifier on dev or test
 def naive_bayes_classifier(testset, posprob, negprob, polarity, words):
-    tot, correct = 0,0
+    tot, correct,count,confidence = 0,0,0,0
     percentages = []
     for line in testset:
         tot+=1
@@ -105,17 +123,22 @@ def naive_bayes_classifier(testset, posprob, negprob, polarity, words):
         for i in a:
             if i not in stopwords:
                 bagwords.append(i)
-        # Here I need to calculate probabilities for each
         posp = probability_sentence(bagwords, posprob, words)
         negp = probability_sentence(bagwords, negprob, words)
         if (posp > negp) and (polarity == 1):
             correct += 1
-        elif (posp < negp) and (polarity == 0):
+        elif (posp <= negp) and (polarity == 0):
             correct += 1
+        else:
+            count += 1
         percentages.append([posp, negp])
-
-        # now I want to create a function to see at least 10 fold differnce between the values to 
-        
+        avg = (posp + negp) / 2
+        if abs(posp - negp) / avg >= 1 and polarity == 1 and posp - negp > 0:
+            confidence += 1
+        if abs(posp - negp) / avg >= 1 and polarity == 0 and posp - negp < 0:
+            confidence += 1
+    # print(correct)
+    # print(confidence)
     percent = correct / tot
     return percent, percentages
 
@@ -123,5 +146,5 @@ def naive_bayes_classifier(testset, posprob, negprob, polarity, words):
 pp, ppview = naive_bayes_classifier(posdev, positiveprobabilities, negativeprobabilities, 1, pwords)
 pn, pnview = naive_bayes_classifier(negdev, positiveprobabilities, negativeprobabilities, 0, nwords)
 
-print(pp)
-print(pn)
+print(pp * 100.0)
+print(pn * 100.0)
