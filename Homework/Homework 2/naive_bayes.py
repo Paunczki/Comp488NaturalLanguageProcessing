@@ -84,7 +84,7 @@ def train_naive_bayes(postrain, negtrain, n):
 
 # Create classifier
 # n is the number of words to include in the clasifier
-positiveprobabilities, negativeprobabilities = train_naive_bayes(postrainer, negtrainer, 90)
+positiveprobabilities, negativeprobabilities = train_naive_bayes(postrainer, negtrainer, 150)
 
 
 pwords, nwords = [], []
@@ -104,7 +104,7 @@ def probability_sentence(allwords, polarclass, wordlist):
             if w is not None:
                 percent *= w 
         else:
-            percent *= (1/8000)
+            percent *= (1/10000)
     if percent == 1:
         return 0
     return percent
@@ -125,21 +125,25 @@ def naive_bayes_classifier(testset, posprob, negprob, polarity, words):
                 bagwords.append(i)
         posp = probability_sentence(bagwords, posprob, words)
         negp = probability_sentence(bagwords, negprob, words)
-        if (posp > negp) and (polarity == 1):
+        if (posp >= negp) and (polarity == 1):
             correct += 1
-        elif (posp <= negp) and (polarity == 0):
+        elif (posp < negp) and (polarity == 0):
             correct += 1
         else:
             count += 1
         percentages.append([posp, negp])
         avg = (posp + negp) / 2
-        if abs(posp - negp) / avg >= 1 and polarity == 1 and posp - negp > 0:
+        if abs(posp - negp) / avg >= 0.1 and polarity == 1 and posp - negp > 0:
             confidence += 1
-        if abs(posp - negp) / avg >= 1 and polarity == 0 and posp - negp < 0:
+        if abs(posp - negp) / avg >= 0.1 and polarity == 0 and posp - negp < 0:
             confidence += 1
+        # if negp == posp:
+        #     print(negp)
     # print(correct)
-    # print(confidence)
+    print(correct)
+    print(confidence)
     percent = correct / tot
+    # print(percentages)
     return percent, percentages
 
 
