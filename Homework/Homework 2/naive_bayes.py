@@ -42,7 +42,7 @@ def prob_word(binaryclass, word, totvocab):
 
 from collections import Counter
 
-def train_naive_bayes(postrain, negtrain, n):
+def train_naive_bayes(postrain, negtrain, nmin, nmax):
     posbagwords = []
     negbagwords = []
     for line in postrain:
@@ -62,11 +62,11 @@ def train_naive_bayes(postrain, negtrain, n):
     negcounter = dict()
     vocab = 0
     for l in positive:
-        if positive[l] >= n:
+        if positive[l] <= nmax and positive[l] >= nmin:
             poscounter[l] = positive[l]
     vocab += len(poscounter)
     for l in negative:
-        if negative[l] >= n:
+        if negative[l] <= nmax and positive[l] >= nmin:
             negcounter[l] = negative[l]
             # print(negcounter)
             if l not in poscounter:
@@ -84,8 +84,11 @@ def train_naive_bayes(postrain, negtrain, n):
 
 # Create classifier
 # n is the number of words to include in the clasifier
-positiveprobabilities, negativeprobabilities = train_naive_bayes(postrainer, negtrainer, 80)
+positiveprobabilities, negativeprobabilities = train_naive_bayes(postrainer, negtrainer, 4, 200)
 
+print(len(positiveprobabilities))
+print(len(negativeprobabilities))
+# print()
 
 pwords, nwords = [], []
 for word in positiveprobabilities:
@@ -137,9 +140,9 @@ def naive_bayes_classifier(testset, posprob, negprob, polarity, words):
             count += 1
         percentages.append([posp, negp])
         avg = (posp + negp) / 2
-        if posp/(negp+0.000001) >= 10000 and polarity == 1 and posp - negp > 0:
+        if posp/(negp+0.000001) >= 100000 and polarity == 1 and posp - negp > 0:
             confidence += 1
-        if negp/(posp+0.000001) >= 10000 and polarity == 0 and posp - negp < 0:
+        if negp/(posp+0.000001) >= 100000 and polarity == 0 and posp - negp < 0:
             confidence += 1
         # if negp == posp:
         #    print(bagwords)
