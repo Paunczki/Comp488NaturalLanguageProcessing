@@ -84,7 +84,7 @@ def train_naive_bayes(postrain, negtrain, n):
 
 # Create classifier
 # n is the number of words to include in the clasifier
-positiveprobabilities, negativeprobabilities = train_naive_bayes(postrainer, negtrainer, 150)
+positiveprobabilities, negativeprobabilities = train_naive_bayes(postrainer, negtrainer, 80)
 
 
 pwords, nwords = [], []
@@ -104,7 +104,7 @@ def probability_sentence(allwords, polarclass, wordlist):
             if w is not None:
                 percent *= w 
         else:
-            percent *= (1/10000)
+            percent *= (1/100000)
     if percent == 1:
         return 0
     return percent
@@ -127,18 +127,23 @@ def naive_bayes_classifier(testset, posprob, negprob, polarity, words):
         negp = probability_sentence(bagwords, negprob, words)
         if (posp >= negp) and (polarity == 1):
             correct += 1
+            if posp != negp:
+                confidence +=1
         elif (posp < negp) and (polarity == 0):
             correct += 1
+            if posp != negp:    
+                confidence +=1
         else:
             count += 1
         percentages.append([posp, negp])
         avg = (posp + negp) / 2
-        if abs(posp - negp) / avg >= 0.1 and polarity == 1 and posp - negp > 0:
+        if posp/(negp+0.000001) >= 10000 and polarity == 1 and posp - negp > 0:
             confidence += 1
-        if abs(posp - negp) / avg >= 0.1 and polarity == 0 and posp - negp < 0:
+        if negp/(posp+0.000001) >= 10000 and polarity == 0 and posp - negp < 0:
             confidence += 1
         # if negp == posp:
-        #     print(negp)
+        #    print(bagwords)
+
     # print(correct)
     print(correct)
     print(confidence)
@@ -152,3 +157,10 @@ pn, pnview = naive_bayes_classifier(negdev, positiveprobabilities, negativeproba
 
 print(pp * 100.0)
 print(pn * 100.0)
+print()
+
+ptest, ptestview = naive_bayes_classifier(postest, positiveprobabilities, negativeprobabilities, 1, pwords)
+ntest, ntestview = naive_bayes_classifier(negtest, positiveprobabilities, negativeprobabilities, 0, nwords)
+
+print(ptest * 100)
+print(ntest * 100)
